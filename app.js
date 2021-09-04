@@ -31,6 +31,8 @@ function parseTree(data) {
 
 const PORT = process.env.PORT || 4001;
 
+app.use(express.static(path.resolve(__dirname, './client/build')));
+
 app.get("", (req, resp) => {
     resp.send("Hello Perry!");
 });
