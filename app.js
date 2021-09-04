@@ -1,6 +1,7 @@
 var express = require('express');
 var app = express();
 var fs = require("fs");
+const path = require('path');
 // var tree = require("./tree");
 const splitLines = str => str.split(/\r?\n/);
 
