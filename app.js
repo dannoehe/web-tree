@@ -36,11 +36,12 @@ app.get("", (req, resp) => {
 });
 
 app.get('/tree', (req, resp) => {
+    console.log("accessing /tree...");
     fs.readFile( __dirname + "/" + "tree_data.csv", 'utf8', function (err, data) {
 
         respContent = parseTree(data);
 
-        resp.send( respContent );
+        resp.json( respContent );
      });
 });
 
