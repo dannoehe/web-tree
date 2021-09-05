@@ -15,9 +15,6 @@ class App extends Component {
     super(props);
 
     this.state = {
-      // searchString: '',
-      // searchFocusIndex: 0,
-      // searchFoundCount: null,
       treeData : [],
       currentNode: {},
     };
@@ -29,7 +26,8 @@ class App extends Component {
     this.rename = this.rename.bind(this);
     this.delete = this.delete.bind(this);
     this.download = this.download.bind(this);
-  
+
+    this.getTreeRoot();
   }
 
 
