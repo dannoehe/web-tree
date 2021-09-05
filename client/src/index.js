@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './app';
+import App from './App';
 // import { AppContainer } from 'react-hot-loader'; // eslint-disable-line import/no-extraneous-dependencies
 
 // const rootEl = document.getElementById('app');
