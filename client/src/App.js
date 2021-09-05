@@ -11,6 +11,8 @@ const msg_none_selected = 'Please select one node to operate';
 const msg_multiple_selected = 'Please select only one node to operate';
 const msg_no_child_node = 'No child node found';
 const msg_no_parent_node = 'No parent node found';
+const msg_no_name_node = 'Name is not specified';
+
 
 class App extends Component {
   constructor(props) {
@@ -169,6 +171,11 @@ class App extends Component {
     var new_node_name = document.getElementById("new_node_name");
     var new_node_desc = document.getElementById("new_node_desc");
     var new_node_ro = document.getElementById("new_node_ro");
+
+    if(new_node_name == null || new_node_name.value === ''){
+      alert(msg_no_name_node);
+      return;
+    }
 
     const data = {
       parent: this.state.currentNode['id']? this.state.currentNode['id'] : "0",
