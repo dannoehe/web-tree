@@ -74,17 +74,6 @@ app.get('/tree', (req, res) => {
         res.json( nodes );
      });
 });
-
-function writeToCSVFile(nodes) {
-    const filename = 'downloaded_tree_data.csv';
-    fs.writeFile(filename, extractAsCSV(nodes), err => {
-      if (err) {
-        console.log('Error writing to csv file', err);
-      } else {
-        console.log(`saved as ${filename}`);
-      }
-    });
-  }
   
   function extractAsCSV(nodes) {
     const header = ["id name    description parent  read_only"];
@@ -127,21 +116,51 @@ app.get('/treedownload', function (req, res) {
  })
 
 app.get('/node', function (req, res) {
-    console.log("Got a GET request: /node/");
+     console.log("Got a GET request: /node/");
+     const node_id = req.query.id;
+     console.log("node_id=" + node_id);
+ 
+     var nodes = [];
+     for (let id in ORIGINAL_TREE) {
+         var node = ORIGINAL_TREE[id];
+         // console.log("node=" + JSON.stringify(node));
+         if (node["parent"] == node_id) {
+             nodes.push(node);
+         }
+     }
+ 
+     res.json( nodes );
+})
+
+app.get('/parentnode', function (req, res) {
+    console.log("Got a GET request: /parentnode/");
     const node_id = req.query.id;
     console.log("node_id=" + node_id);
 
     var nodes = [];
+    var parent_id = '0';
     for (let id in ORIGINAL_TREE) {
         var node = ORIGINAL_TREE[id];
         // console.log("node=" + JSON.stringify(node));
-        if (node["parent"] == node_id) {
-            nodes.push(node);
+        if (node["id"] == node_id) {
+            parent_id = node["parent"];
+            break;
         }
+    }
+    console.log("parent_id=" + parent_id);
+    if(parent_id != '0') {
+        for (let id in ORIGINAL_TREE) {
+            var node = ORIGINAL_TREE[id];
+            // console.log("node=" + JSON.stringify(node));
+            if (node["id"] == parent_id) {
+                nodes.push(node);
+                break;
+            }
+        } 
     }
 
     res.json( nodes );
- })
+})
 
  app.put('/node', function (req, res) {
     const node_id = req.query.id;

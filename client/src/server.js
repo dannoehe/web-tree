@@ -19,6 +19,14 @@ class DataService {
     });
   }
 
+  getParent(id) {
+    return http.get(`/parentnode?id=${id}`)
+    .then((res) => {
+        console.log(`getParent=` + JSON.stringify(res.data))
+        return res.data;
+    });
+  }
+
   createNode(node_data) {
     console.log(`createNode.node_data=` + JSON.stringify(node_data))
     // return http.post("/nodes", {data: node_data})

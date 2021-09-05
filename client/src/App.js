@@ -9,6 +9,8 @@ import DataService from './server';
 
 const msg_none_selected = 'Please select one node to operate';
 const msg_multiple_selected = 'Please select only one node to operate';
+const msg_no_child_node = 'No child node found';
+const msg_no_parent_node = 'No parent node found';
 
 class App extends Component {
   constructor(props) {
@@ -21,6 +23,7 @@ class App extends Component {
 
     this.getTreeRoot = this.getTreeRoot.bind(this);
     this.navigate = this.navigate.bind(this);
+    this.navigateParent = this.navigateParent.bind(this);
     this.createNode = this.createNode.bind(this);
     this.create = this.create.bind(this);
     this.rename = this.rename.bind(this);
@@ -66,8 +69,53 @@ class App extends Component {
     }).
     then(() => {
       console.log(`treeArray=` + JSON.stringify(treeArray));
-      this.setState({ treeData : treeArray , currentNode: {'id': checkboxes[0].id, 'name': checkboxes[0].name}});
+      if(treeArray.length == 0) {
+        alert(msg_no_child_node);
+        return;
+      } else {
+        this.setState({ 
+          treeData : treeArray, 
+          currentNode: {'id': checkboxes[0].id, 'name': checkboxes[0].name},
+        });
+      }
     });
+  }
+
+  navigateParent = () => {
+    var parentNode = {};
+    var treeArray = [];
+
+    var current_node_id = this.state.currentNode && this.state.currentNode['id'] ? this.state.currentNode['id'] : '0';
+    console.log(`current_node_id=` + current_node_id);
+    if (current_node_id === '0') {
+      alert(msg_no_parent_node);
+      return;
+    }
+
+    DataService.getParent(current_node_id)
+    .then((parent) => {
+      var parent_id = '0';
+      if (parent.length > 0) {
+        parentNode = parent[0];
+        parent_id = parent[0]['id'];
+      }
+      console.log(`parent_id=` + parent_id);
+
+          DataService.getChildren(parent_id)
+          .then((obj) => {
+            for(var i in obj)
+              treeArray.push(obj[i]);
+          }).
+          then(() => {
+            console.log(`treeArray.2=` + JSON.stringify(treeArray));
+            if(treeArray.length == 0) {
+              alert(msg_no_child_node);
+              return;
+            } else {
+              this.setState({ treeData : treeArray , currentNode: parentNode});
+            }
+          });
+    })
   }
   
   createNode =() => {
@@ -262,6 +310,7 @@ class App extends Component {
           <button onClick={this.getTreeRoot}>Restore Tree</button>
           <button onClick={this.download}>Download Tree</button>
           <button onClick={this.navigate}>Navigate</button>
+          <button onClick={this.navigateParent}>Back To Parent</button>
           <button onClick={this.create}>Create</button>
           <button onClick={this.rename}>Rename</button>
           <button onClick={this.delete}>Delete</button>
