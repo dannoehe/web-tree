@@ -75,6 +75,57 @@ app.get('/tree', (req, res) => {
      });
 });
 
+function writeToCSVFile(nodes) {
+    const filename = 'downloaded_tree_data.csv';
+    fs.writeFile(filename, extractAsCSV(nodes), err => {
+      if (err) {
+        console.log('Error writing to csv file', err);
+      } else {
+        console.log(`saved as ${filename}`);
+      }
+    });
+  }
+  
+  function extractAsCSV(nodes) {
+    const header = ["id name    description parent  read_only"];
+    if (nodes == null || nodes.length == 0) {
+        return header.toString();
+    } else {
+        const rows = nodes.map(node =>
+           `${node.id}  ${node.name}    ${node.description} ${node.parent} ${node.read_only}`
+        );
+        return header.concat(rows).join("\n");
+    }
+  }
+  
+app.get('/treedownload', function (req, res) {
+   const node_id = req.query.id;
+   console.log(`node_id=` + node_id);
+   var data = req.body;
+   console.log("Got a DOWNLOAD request: /treedownload/ with node_id: " + JSON.stringify(node_id));
+
+   var nodes = [];
+   for (let id in ORIGINAL_TREE) {
+       var node = ORIGINAL_TREE[id];
+    //    if (node["parent"] == data['parent']) {
+    //        nodes.push(node);
+    //    }
+        nodes.push(node);
+   }
+   console.log(`nodes=` + JSON.stringify(nodes));
+
+   const file_to_download = __dirname + '/download_folder/downloaded_tree_data.csv';
+   console.log(`file_to_download=` + file_to_download);
+    fs.writeFile(file_to_download, extractAsCSV(nodes), err => {
+      if (err) {
+        console.log('Error writing to csv file', err);
+      } else {
+        console.log(`saved as ${file_to_download}`);
+        res.download(file_to_download);
+      }
+    });
+ })
+
 app.get('/node', function (req, res) {
     console.log("Got a GET request: /node/");
     const node_id = req.query.id;

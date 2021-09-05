@@ -147,7 +147,7 @@ class App extends Component {
   }
 
   delete = () => {
-    var checkboxes = document.querySelectorAll('input[type=checkbox]:checked')
+    var checkboxes = document.querySelectorAll('input[type=checkbox]:checked');
     if (checkboxes.length == 0) {
       alert(msg_none_selected);
       return;
@@ -173,25 +173,21 @@ class App extends Component {
   }
 
   download = () => {
-    var checkboxes = document.querySelectorAll('input[type=checkbox]:checked')
-    if (checkboxes.length == 0) {
-      alert('woooooooot?');
-      return;
-    }
+    var checkboxes = document.querySelectorAll('input[type=checkbox]:checked');
     if (checkboxes.length > 1) {
+      alert(msg_multiple_selected);
       return;
     }
 
-    var treeArray = [];
-    Promise.resolve(DataService.getChildren(checkboxes[0].id))
-    .then((obj) => {
-      for(var i in obj)
-        treeArray.push(obj[i]);
-    }).
-    then(() => {
-      console.log(`treeArray=` + JSON.stringify(treeArray));
-      this.setState({ treeData : treeArray , currentNode: {'id': checkboxes[0].id, 'name': checkboxes[0].name}});
-    });
+    var tree_id = '0';
+    if (checkboxes.length == 1) {
+      tree_id = checkboxes[0].id;
+    }
+
+    DataService.downloadTree(tree_id);
+    // .then(() => {
+      console.log(`downloaded!`);
+    // });
   }
 
   rename = () => {
@@ -266,11 +262,11 @@ class App extends Component {
         <div id='header_banner' style={{ flex: '0 0 auto', padding: '0 15px' }}>
           <h3>Tree Nodes</h3>
           <button onClick={this.getTreeRoot}>Restore Tree</button>
+          <button onClick={this.download}>Download Tree</button>
           <button onClick={this.navigate}>Navigate</button>
           <button onClick={this.create}>Create</button>
           <button onClick={this.rename}>Rename</button>
           <button onClick={this.delete}>Delete</button>
-          <button onClick={this.download}>Download</button>
           <h3 id='current_node'></h3>
         </div>
 

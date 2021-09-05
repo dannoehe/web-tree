@@ -1,4 +1,5 @@
 import http from "./http-common";
+import download from 'js-file-download';
 
 class DataService {
 
@@ -44,16 +45,17 @@ class DataService {
     });;
   }
 
-  delete(id) {
-    return http.delete(`/node?id=${id}`);
-  }
-
-  deleteAll() {
-    return http.delete(`/tutorials`);
-  }
-
-  findByTitle(title) {
-    return http.get(`/tutorials?title=${title}`);
+  downloadTree(id) {
+    return http.get(`/treedownload?id=${id}`, {
+        responseType: 'blob',
+        headers: {
+            'Content-Type': 'text/csv',
+        }
+    })
+    .then((res) => {
+        console.log(`res=` + res.headers);
+        download(res.data, 'downloaded_tree_data.csv');
+    });;
   }
 }
 
