@@ -299,9 +299,13 @@ class App extends Component {
       console.log(`this.state=` + JSON.stringify(this.state.currentNode));
 
     var new_node_name = document.getElementById("new_node_name");
+    if(new_node_name == null || new_node_name.value === ''){
+      alert(msg_no_name_node);
+      return;
+    }
 
     const data = {
-      name: new_node_name? new_node_name.value : "",
+      name: new_node_name.value,
       parent: this.state.currentNode['id']? this.state.currentNode['id'] : "0",
     }
 
