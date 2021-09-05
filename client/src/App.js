@@ -12,6 +12,7 @@ const msg_multiple_selected = 'Please select only one node to operate';
 const msg_no_child_node = 'No child node found';
 const msg_no_parent_node = 'No parent node found';
 const msg_no_name_node = 'Name is not specified';
+const msg_unable_edit_readonly = 'Unable to update/delete read-only node';
 
 
 class App extends Component {
@@ -131,7 +132,7 @@ class App extends Component {
       parent: this.state.currentNode['id']? this.state.currentNode['id'] : "0",
       name: new_node_name? new_node_name.value : "",
       description: new_node_name? new_node_name.value : "",
-      readonly: new_node_name && new_node_name.value == "no" ? "0" : "1",
+      read_only: new_node_name && new_node_name.value == "no" ? "0" : "1",
     }
   
     var treeArray = [];
@@ -210,10 +211,16 @@ class App extends Component {
       return;
     }
 
+    var node_delete = this.getNodeInCurrentList(checkboxes[0]['id']);
+    if(node_delete["read_only"] == '1'){
+      alert(msg_unable_edit_readonly);
+      return;
+    }
+
     var parent = this.state.currentNode['id']? this.state.currentNode['id'] : "0";
 
     var treeArray = [];
-    Promise.resolve(DataService.delete(checkboxes[0].id))
+    Promise.resolve(DataService.delete(node_delete['id']))
     .then(() => DataService.getChildren(parent))
     .then((obj) => {
       for(var i in obj)
@@ -243,6 +250,21 @@ class App extends Component {
     // });
   }
 
+  getNodeInCurrentList(id){
+    console.log(`getNodeInCurrentList.id=` + id);
+    var node = {};
+    for ( var index in this.state.treeData){
+      var treeNode = this.state.treeData[index];
+      if (treeNode['id'] == id) {
+        node = treeNode;
+        break;
+      }
+    }
+
+    console.log(`getNodeInCurrentList.node=` + JSON.stringify(node));
+    return node;
+  }
+
   rename = () => {
     var checkboxes = document.querySelectorAll('input[type=checkbox]:checked')
     if (checkboxes.length == 0) {
@@ -251,6 +273,12 @@ class App extends Component {
     }
     if (checkboxes.length > 1) {
       alert(msg_multiple_selected);
+      return;
+    }
+
+    var node_rename = this.getNodeInCurrentList(checkboxes[0]['id']);
+    if(node_rename["read_only"] == '1'){
+      alert(msg_unable_edit_readonly);
       return;
     }
 

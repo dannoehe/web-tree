@@ -53,6 +53,15 @@ class DataService {
     });;
   }
 
+  delete(id, data) {
+    return http.delete(`/node?id=${id}`)
+    // .then(response => response.json())
+    .then((res) => {
+        console.log(`res=` + res);
+        return res;
+    });;
+  }
+
   downloadTree(id) {
     return http.get(`/treedownload?id=${id}`, {
         responseType: 'blob',
